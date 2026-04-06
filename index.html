@@ -256,6 +256,293 @@
       font-size: 14px;
     }
 
+    /* ── Category row ── */
+    .cat-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 20px 12px;
+    }
+
+    .cat-select {
+      flex: 1;
+      height: 38px;
+      padding: 0 12px;
+      font-size: 14px;
+      font-family: inherit;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238e8e93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .cat-select:focus { border-color: var(--primary); }
+
+    .btn-manage-cats {
+      height: 38px;
+      padding: 0 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--primary);
+      font-size: 14px;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-manage-cats:active { background: var(--primary-light); }
+
+    /* ── Category header in list ── */
+    .cat-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 4px 4px;
+    }
+
+    .cat-priority-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .cat-header-name {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-secondary);
+    }
+
+    /* ── Modal overlay ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 100;
+      display: flex;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-panel {
+      width: 100%;
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+      padding: 0 0 calc(env(safe-area-inset-bottom) + 20px);
+      max-height: 80dvh;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    .modal-overlay.open .modal-panel {
+      transform: translateY(0);
+    }
+
+    .modal-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      margin: 10px auto 0;
+      flex-shrink: 0;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .modal-header h2 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .modal-close-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg);
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ── Category list inside modal ── */
+    .modal-cat-list {
+      overflow-y: auto;
+      flex: 1;
+      padding: 8px 20px;
+    }
+
+    .modal-cat-empty {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 14px;
+      padding: 24px 0;
+    }
+
+    .modal-cat-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-cat-item:last-child { border-bottom: none; }
+
+    .modal-priority-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .modal-cat-name {
+      flex: 1;
+      font-size: 16px;
+    }
+
+    .modal-cat-controls {
+      display: flex;
+      gap: 4px;
+    }
+
+    .cat-move-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: none;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s;
+    }
+
+    .cat-move-btn:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .cat-move-btn:not(:disabled):active { background: var(--border); }
+
+    .cat-del-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: none;
+      background: #ff3b3015;
+      color: var(--danger);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s;
+    }
+
+    .cat-del-btn:active { background: #ff3b3030; }
+
+    /* ── Add category form inside modal ── */
+    .add-cat-form {
+      display: flex;
+      gap: 10px;
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .add-cat-form input {
+      flex: 1;
+      height: 42px;
+      padding: 0 14px;
+      font-size: 15px;
+      font-family: inherit;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .add-cat-form input:focus { border-color: var(--primary); }
+
+    .add-cat-form input::placeholder { color: var(--text-secondary); }
+
+    .btn-add-cat {
+      height: 42px;
+      padding: 0 16px;
+      border-radius: 10px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: opacity 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-add-cat:active { opacity: 0.8; }
+
     /* ── Animations ── */
     @keyframes slideIn {
       from { opacity: 0; transform: translateY(-8px); }
@@ -287,6 +574,13 @@
     </button>
   </div>
 
+  <div class="cat-row">
+    <select id="cat-select" class="cat-select" aria-label="Kategorie auswählen">
+      <option value="">Keine Kategorie</option>
+    </select>
+    <button class="btn-manage-cats" id="manage-cats-btn">Kategorien</button>
+  </div>
+
   <div class="stats">
     <span id="count-text"></span>
     <button class="btn-clear" id="clear-done-btn">Erledigte löschen</button>
@@ -294,32 +588,181 @@
 
   <div class="list-wrapper" id="list-wrapper"></div>
 
+  <!-- Categories Modal -->
+  <div class="modal-overlay" id="cat-modal" role="dialog" aria-modal="true" aria-label="Kategorien verwalten">
+    <div class="modal-panel">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <h2>Kategorien</h2>
+        <button class="modal-close-btn" id="close-modal-btn" aria-label="Schließen">✕</button>
+      </div>
+      <div class="modal-cat-list" id="modal-cat-list"></div>
+      <div class="add-cat-form">
+        <input id="new-cat-input" type="text" placeholder="Neue Kategorie…" autocomplete="off" />
+        <button class="btn-add-cat" id="add-cat-btn">Hinzufügen</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const STORAGE_KEY = 'shopping-list-v1';
+    const STORAGE_KEY    = 'shopping-list-v1';
+    const CATEGORIES_KEY = 'shopping-categories-v1';
 
-    let items = load();
+    let items      = loadItems();
+    let categories = loadCategories();
 
-    const input       = document.getElementById('new-item');
-    const addBtn      = document.getElementById('add-btn');
-    const wrapper     = document.getElementById('list-wrapper');
-    const progressTxt = document.getElementById('progress-text');
-    const countTxt    = document.getElementById('count-text');
-    const clearDoneBtn = document.getElementById('clear-done-btn');
+    const input         = document.getElementById('new-item');
+    const addBtn        = document.getElementById('add-btn');
+    const wrapper       = document.getElementById('list-wrapper');
+    const progressTxt   = document.getElementById('progress-text');
+    const countTxt      = document.getElementById('count-text');
+    const clearDoneBtn  = document.getElementById('clear-done-btn');
+    const catSelect     = document.getElementById('cat-select');
+    const manageCatsBtn = document.getElementById('manage-cats-btn');
+    const catModal      = document.getElementById('cat-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modalCatList  = document.getElementById('modal-cat-list');
+    const newCatInput   = document.getElementById('new-cat-input');
+    const addCatBtn     = document.getElementById('add-cat-btn');
 
     /* ── Persistence ── */
-    function load() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-      } catch { return []; }
+    function loadItems() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; }
     }
 
-    function save() {
+    function loadCategories() {
+      try { return JSON.parse(localStorage.getItem(CATEGORIES_KEY)) || []; } catch { return []; }
+    }
+
+    function saveItems() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }
+
+    function saveCategories() {
+      localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
     }
 
     /* ── Helpers ── */
     function uid() {
       return Date.now().toString(36) + Math.random().toString(36).slice(2);
+    }
+
+    /* ── Category select sync ── */
+    function syncCatSelect() {
+      const current = catSelect.value;
+      catSelect.innerHTML = '<option value="">Keine Kategorie</option>';
+      categories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat.id;
+        opt.textContent = cat.name;
+        catSelect.appendChild(opt);
+      });
+      catSelect.value = categories.some(c => c.id === current) ? current : '';
+    }
+
+    /* ── Modal ── */
+    function openModal() {
+      renderModalCatList();
+      catModal.classList.add('open');
+      newCatInput.focus();
+    }
+
+    function closeModal() {
+      catModal.classList.remove('open');
+    }
+
+    function renderModalCatList() {
+      modalCatList.innerHTML = '';
+      if (categories.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'modal-cat-empty';
+        empty.textContent = 'Noch keine Kategorien – füge welche hinzu!';
+        modalCatList.appendChild(empty);
+        return;
+      }
+      categories.forEach((cat, idx) => {
+        const item = document.createElement('div');
+        item.className = 'modal-cat-item';
+
+        const badge = document.createElement('div');
+        badge.className = 'modal-priority-badge';
+        badge.textContent = idx + 1;
+
+        const name = document.createElement('span');
+        name.className = 'modal-cat-name';
+        name.textContent = cat.name;
+
+        const controls = document.createElement('div');
+        controls.className = 'modal-cat-controls';
+
+        const upBtn = document.createElement('button');
+        upBtn.className = 'cat-move-btn';
+        upBtn.setAttribute('aria-label', 'Nach oben');
+        upBtn.innerHTML = '↑';
+        upBtn.disabled = idx === 0;
+        upBtn.addEventListener('click', () => moveCat(idx, -1));
+
+        const downBtn = document.createElement('button');
+        downBtn.className = 'cat-move-btn';
+        downBtn.setAttribute('aria-label', 'Nach unten');
+        downBtn.innerHTML = '↓';
+        downBtn.disabled = idx === categories.length - 1;
+        downBtn.addEventListener('click', () => moveCat(idx, 1));
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'cat-del-btn';
+        delBtn.setAttribute('aria-label', 'Löschen');
+        delBtn.innerHTML = `
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>`;
+        delBtn.addEventListener('click', () => deleteCat(cat.id));
+
+        controls.appendChild(upBtn);
+        controls.appendChild(downBtn);
+        controls.appendChild(delBtn);
+
+        item.appendChild(badge);
+        item.appendChild(name);
+        item.appendChild(controls);
+        modalCatList.appendChild(item);
+      });
+    }
+
+    /* ── Category CRUD ── */
+    function addCategory() {
+      const name = newCatInput.value.trim();
+      if (!name) return;
+      categories.push({ id: uid(), name });
+      saveCategories();
+      newCatInput.value = '';
+      syncCatSelect();
+      renderModalCatList();
+      render();
+    }
+
+    function moveCat(idx, dir) {
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= categories.length) return;
+      [categories[idx], categories[newIdx]] = [categories[newIdx], categories[idx]];
+      saveCategories();
+      syncCatSelect();
+      renderModalCatList();
+      render();
+    }
+
+    function clearCategoryFromItems(categoryId) {
+      items.forEach(item => { if (item.categoryId === categoryId) item.categoryId = null; });
+    }
+
+    function deleteCat(id) {
+      categories = categories.filter(c => c.id !== id);
+      clearCategoryFromItems(id);
+      saveCategories();
+      saveItems();
+      syncCatSelect();
+      renderModalCatList();
+      render();
     }
 
     /* ── Render ── */
@@ -346,7 +789,7 @@
           label.className = 'section-label';
           label.textContent = 'Noch zu kaufen';
           wrapper.appendChild(label);
-          wrapper.appendChild(buildList(open));
+          renderGrouped(open);
         }
         if (done.length > 0) {
           const label = document.createElement('p');
@@ -358,7 +801,7 @@
       }
 
       // Stats
-      const total = items.length;
+      const total     = items.length;
       const doneCount = done.length;
       progressTxt.textContent = total === 0
         ? 'Deine Liste ist leer'
@@ -368,6 +811,46 @@
 
       countTxt.textContent = total > 0 ? `${total} Artikel` : '';
       clearDoneBtn.style.display = done.length > 0 ? '' : 'none';
+    }
+
+    function renderGrouped(openItems) {
+      if (categories.length === 0) {
+        wrapper.appendChild(buildList(openItems));
+        return;
+      }
+
+      // Build ordered groups: categories in priority order, then uncategorised
+      const groups = categories.map(cat => ({ cat, catItems: [] }));
+      const uncategorised = [];
+
+      openItems.forEach(item => {
+        const group = groups.find(g => g.cat.id === item.categoryId);
+        if (group) group.catItems.push(item);
+        else uncategorised.push(item);
+      });
+
+      groups.forEach(({ cat, catItems }, idx) => {
+        if (catItems.length === 0) return;
+        const header = document.createElement('div');
+        header.className = 'cat-header';
+        header.innerHTML = `
+          <div class="cat-priority-badge">${idx + 1}</div>
+          <span class="cat-header-name">${escapeHtml(cat.name)}</span>`;
+        wrapper.appendChild(header);
+        wrapper.appendChild(buildList(catItems));
+      });
+
+      if (uncategorised.length > 0) {
+        const header = document.createElement('div');
+        header.className = 'cat-header';
+        header.innerHTML = `<span class="cat-header-name">Sonstige</span>`;
+        wrapper.appendChild(header);
+        wrapper.appendChild(buildList(uncategorised));
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     function buildList(subset) {
@@ -413,8 +896,9 @@
     function addItem() {
       const text = input.value.trim();
       if (!text) return;
-      items.unshift({ id: uid(), text, done: false });
-      save();
+      const categoryId = catSelect.value || null;
+      items.unshift({ id: uid(), text, done: false, categoryId });
+      saveItems();
       render();
       input.value = '';
       input.focus();
@@ -422,21 +906,21 @@
 
     function toggleDone(id) {
       const item = items.find(i => i.id === id);
-      if (item) { item.done = !item.done; save(); render(); }
+      if (item) { item.done = !item.done; saveItems(); render(); }
     }
 
     function deleteItem(id, li) {
       li.classList.add('removing');
       li.addEventListener('animationend', () => {
         items = items.filter(i => i.id !== id);
-        save();
+        saveItems();
         render();
       }, { once: true });
     }
 
     clearDoneBtn.addEventListener('click', () => {
       items = items.filter(i => !i.done);
-      save();
+      saveItems();
       render();
     });
 
@@ -444,7 +928,15 @@
     addBtn.addEventListener('click', addItem);
     input.addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
 
+    /* ── Category modal events ── */
+    manageCatsBtn.addEventListener('click', openModal);
+    closeModalBtn.addEventListener('click', closeModal);
+    catModal.addEventListener('click', e => { if (e.target === catModal) closeModal(); });
+    addCatBtn.addEventListener('click', addCategory);
+    newCatInput.addEventListener('keydown', e => { if (e.key === 'Enter') addCategory(); });
+
     /* ── Init ── */
+    syncCatSelect();
     render();
   </script>
 </body>
