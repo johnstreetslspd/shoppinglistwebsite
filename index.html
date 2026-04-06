@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>Einkaufsliste</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --primary: #007aff;
+      --primary-light: #e8f0fe;
+      --danger: #ff3b30;
+      --text: #1c1c1e;
+      --text-secondary: #8e8e93;
+      --border: #e5e5ea;
+      --checked-text: #aeaeb2;
+      --radius: 14px;
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* ── Header ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(245, 245, 247, 0.85);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      padding: calc(env(safe-area-inset-top) + 16px) 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    header .subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* ── Input area ── */
+    .input-area {
+      display: flex;
+      gap: 10px;
+      padding: 16px 20px;
+    }
+
+    .input-area input {
+      flex: 1;
+      height: 46px;
+      padding: 0 16px;
+      font-size: 16px;
+      font-family: inherit;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-area input:focus {
+      border-color: var(--primary);
+    }
+
+    .input-area input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    .btn-add {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: opacity 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-add:active {
+      opacity: 0.8;
+      transform: scale(0.95);
+    }
+
+    /* ── Stats bar ── */
+    .stats {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .btn-clear {
+      background: none;
+      border: none;
+      color: var(--danger);
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 4px 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-clear:active { opacity: 0.6; }
+
+    /* ── List ── */
+    .list-wrapper {
+      padding: 0 20px 32px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-secondary);
+      margin: 12px 4px 6px;
+    }
+
+    ul {
+      list-style: none;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    li:last-child { border-bottom: none; }
+
+    /* Checkbox */
+    .check-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    li.done .check-btn {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .check-btn svg {
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    li.done .check-btn svg { opacity: 1; }
+
+    /* Item text */
+    .item-text {
+      flex: 1;
+      font-size: 16px;
+      word-break: break-word;
+      transition: color 0.2s;
+    }
+
+    li.done .item-text {
+      color: var(--checked-text);
+      text-decoration: line-through;
+    }
+
+    /* Delete button */
+    .btn-delete {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: #ff3b3015;
+      color: var(--danger);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-delete:active {
+      background: #ff3b3030;
+      transform: scale(0.9);
+    }
+
+    /* ── Empty state ── */
+    .empty {
+      text-align: center;
+      padding: 56px 20px;
+      color: var(--text-secondary);
+    }
+
+    .empty svg {
+      width: 64px;
+      height: 64px;
+      opacity: 0.3;
+      margin-bottom: 12px;
+    }
+
+    .empty p {
+      font-size: 17px;
+      font-weight: 500;
+    }
+
+    .empty small {
+      font-size: 14px;
+    }
+
+    /* ── Animations ── */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    li { animation: slideIn 0.2s ease; }
+
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateX(20px); }
+    }
+
+    li.removing { animation: fadeOut 0.2s ease forwards; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🛒 Einkaufsliste</h1>
+    <p class="subtitle" id="progress-text">Lade…</p>
+  </header>
+
+  <div class="input-area">
+    <input id="new-item" type="text" placeholder="Artikel hinzufügen…" autocomplete="off" autocorrect="on" />
+    <button class="btn-add" id="add-btn" aria-label="Hinzufügen">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M9 1v16M1 9h16" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="stats">
+    <span id="count-text"></span>
+    <button class="btn-clear" id="clear-done-btn">Erledigte löschen</button>
+  </div>
+
+  <div class="list-wrapper" id="list-wrapper"></div>
+
+  <script>
+    const STORAGE_KEY = 'shopping-list-v1';
+
+    let items = load();
+
+    const input       = document.getElementById('new-item');
+    const addBtn      = document.getElementById('add-btn');
+    const wrapper     = document.getElementById('list-wrapper');
+    const progressTxt = document.getElementById('progress-text');
+    const countTxt    = document.getElementById('count-text');
+    const clearDoneBtn = document.getElementById('clear-done-btn');
+
+    /* ── Persistence ── */
+    function load() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch { return []; }
+    }
+
+    function save() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }
+
+    /* ── Helpers ── */
+    function uid() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2);
+    }
+
+    /* ── Render ── */
+    function render() {
+      wrapper.innerHTML = '';
+
+      const open = items.filter(i => !i.done);
+      const done = items.filter(i => i.done);
+
+      if (items.length === 0) {
+        wrapper.innerHTML = `
+          <div class="empty">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="12" y="8" width="40" height="48" rx="6" stroke="currentColor" stroke-width="3"/>
+              <path d="M22 22h20M22 30h20M22 38h12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              <path d="M24 8v-2a8 8 0 0 1 16 0v2" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <p>Keine Artikel</p>
+            <small>Füge oben etwas hinzu</small>
+          </div>`;
+      } else {
+        if (open.length > 0) {
+          const label = document.createElement('p');
+          label.className = 'section-label';
+          label.textContent = 'Noch zu kaufen';
+          wrapper.appendChild(label);
+          wrapper.appendChild(buildList(open));
+        }
+        if (done.length > 0) {
+          const label = document.createElement('p');
+          label.className = 'section-label';
+          label.textContent = 'Erledigt';
+          wrapper.appendChild(label);
+          wrapper.appendChild(buildList(done));
+        }
+      }
+
+      // Stats
+      const total = items.length;
+      const doneCount = done.length;
+      progressTxt.textContent = total === 0
+        ? 'Deine Liste ist leer'
+        : doneCount === total
+          ? '🎉 Alles erledigt!'
+          : `${doneCount} von ${total} erledigt`;
+
+      countTxt.textContent = total > 0 ? `${total} Artikel` : '';
+      clearDoneBtn.style.display = done.length > 0 ? '' : 'none';
+    }
+
+    function buildList(subset) {
+      const ul = document.createElement('ul');
+      subset.forEach(item => {
+        const li = document.createElement('li');
+        if (item.done) li.classList.add('done');
+
+        // Check button
+        const checkBtn = document.createElement('button');
+        checkBtn.className = 'check-btn';
+        checkBtn.setAttribute('aria-label', item.done ? 'Als offen markieren' : 'Als erledigt markieren');
+        checkBtn.innerHTML = `
+          <svg width="13" height="10" viewBox="0 0 13 10" fill="none">
+            <path d="M1 5l3.5 3.5L12 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>`;
+        checkBtn.addEventListener('click', () => toggleDone(item.id));
+
+        // Text
+        const span = document.createElement('span');
+        span.className = 'item-text';
+        span.textContent = item.text;
+
+        // Delete button
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn-delete';
+        delBtn.setAttribute('aria-label', 'Löschen');
+        delBtn.innerHTML = `
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>`;
+        delBtn.addEventListener('click', () => deleteItem(item.id, li));
+
+        li.appendChild(checkBtn);
+        li.appendChild(span);
+        li.appendChild(delBtn);
+        ul.appendChild(li);
+      });
+      return ul;
+    }
+
+    /* ── Actions ── */
+    function addItem() {
+      const text = input.value.trim();
+      if (!text) return;
+      items.unshift({ id: uid(), text, done: false });
+      save();
+      render();
+      input.value = '';
+      input.focus();
+    }
+
+    function toggleDone(id) {
+      const item = items.find(i => i.id === id);
+      if (item) { item.done = !item.done; save(); render(); }
+    }
+
+    function deleteItem(id, li) {
+      li.classList.add('removing');
+      li.addEventListener('animationend', () => {
+        items = items.filter(i => i.id !== id);
+        save();
+        render();
+      }, { once: true });
+    }
+
+    clearDoneBtn.addEventListener('click', () => {
+      items = items.filter(i => !i.done);
+      save();
+      render();
+    });
+
+    /* ── Input events ── */
+    addBtn.addEventListener('click', addItem);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
+
+    /* ── Init ── */
+    render();
+  </script>
+</body>
+</html>
