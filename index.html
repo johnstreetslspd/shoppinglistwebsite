@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="theme-color" content="#ffffff" id="meta-theme-color" />
   <title>Einkaufsliste</title>
@@ -16,24 +16,32 @@
 
     /* ── Light theme (default) ── */
     :root {
-      --bg: #f5f5f7;
+      --bg: #f2f2f7;
       --surface: #ffffff;
       --surface-secondary: #f2f2f7;
       --primary: #007aff;
+      --primary-hover: #0066d6;
       --primary-light: #e8f0fe;
       --danger: #ff3b30;
+      --danger-light: #ffe5e3;
       --success: #34c759;
+      --success-light: #e3f9e8;
       --text: #1c1c1e;
       --text-secondary: #8e8e93;
       --border: #e5e5ea;
       --checked-text: #aeaeb2;
-      --radius: 14px;
-      --shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-      --header-bg: rgba(245, 245, 247, 0.85);
+      --radius: 16px;
+      --shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.10);
+      --header-bg: rgba(242, 242, 247, 0.82);
       --modal-backdrop: rgba(0, 0, 0, 0.4);
       --quantity-bg: #e8f0fe;
       --quantity-text: #007aff;
       --search-bg: #e5e5ea;
+      --toast-bg: #1c1c1e;
+      --toast-text: #ffffff;
+      --gradient-start: #007aff;
+      --gradient-end: #5856d6;
       color-scheme: light;
     }
 
@@ -43,20 +51,32 @@
       --surface: #1c1c1e;
       --surface-secondary: #2c2c2e;
       --primary: #0a84ff;
+      --primary-hover: #409cff;
       --primary-light: #0a84ff20;
       --danger: #ff453a;
+      --danger-light: #ff453a20;
       --success: #30d158;
+      --success-light: #30d15820;
       --text: #f5f5f7;
       --text-secondary: #98989d;
       --border: #38383a;
       --checked-text: #636366;
-      --shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-      --header-bg: rgba(0, 0, 0, 0.85);
+      --shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+      --header-bg: rgba(0, 0, 0, 0.82);
       --modal-backdrop: rgba(0, 0, 0, 0.6);
       --quantity-bg: #0a84ff20;
       --quantity-text: #0a84ff;
       --search-bg: #38383a;
+      --toast-bg: #f5f5f7;
+      --toast-text: #1c1c1e;
+      --gradient-start: #0a84ff;
+      --gradient-end: #5e5ce6;
       color-scheme: dark;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
@@ -76,7 +96,7 @@
       background: var(--header-bg);
       backdrop-filter: saturate(180%) blur(20px);
       -webkit-backdrop-filter: saturate(180%) blur(20px);
-      padding: calc(env(safe-area-inset-top) + 16px) 20px 16px;
+      padding: calc(env(safe-area-inset-top) + 18px) 20px 16px;
       border-bottom: 1px solid var(--border);
       transition: background 0.3s;
     }
@@ -88,9 +108,13 @@
     }
 
     header h1 {
-      font-size: 28px;
-      font-weight: 700;
+      font-size: 30px;
+      font-weight: 800;
       letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .header-actions {
@@ -99,8 +123,8 @@
     }
 
     .header-icon-btn {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       border: none;
       background: var(--surface-secondary);
@@ -110,11 +134,16 @@
       align-items: center;
       justify-content: center;
       -webkit-tap-highlight-color: transparent;
-      transition: background 0.15s, transform 0.1s;
+      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+    }
+
+    .header-icon-btn:hover {
+      background: var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     .header-icon-btn:active {
-      transform: scale(0.92);
+      transform: scale(0.90);
     }
 
     header .subtitle {
@@ -173,20 +202,21 @@
 
     .input-area input {
       flex: 1;
-      height: 46px;
+      height: 48px;
       padding: 0 16px;
       font-size: 16px;
       font-family: inherit;
       border: 1.5px solid var(--border);
-      border-radius: 12px;
+      border-radius: 14px;
       background: var(--surface);
       color: var(--text);
       outline: none;
-      transition: border-color 0.2s, background 0.3s;
+      transition: border-color 0.2s, background 0.3s, box-shadow 0.2s;
     }
 
     .input-area input:focus {
       border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
     }
 
     .input-area input::placeholder {
@@ -200,11 +230,11 @@
     }
 
     .btn-add {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
       border: none;
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
       color: #fff;
       font-size: 24px;
       line-height: 1;
@@ -213,13 +243,20 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      transition: opacity 0.15s, transform 0.1s;
+      transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
       -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+    }
+
+    .btn-add:hover {
+      box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+      transform: translateY(-1px);
     }
 
     .btn-add:active {
-      opacity: 0.8;
-      transform: scale(0.95);
+      opacity: 0.85;
+      transform: scale(0.95) translateY(0);
+      box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
     }
 
     /* ── Stats bar ── */
@@ -274,31 +311,47 @@
       padding: 14px 16px;
       border-bottom: 1px solid var(--border);
       gap: 12px;
-      transition: background 0.15s;
+      transition: background 0.15s, transform 0.15s;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    @media (hover: hover) {
+      li:hover {
+        background: var(--surface-secondary);
+      }
     }
 
     li:last-child { border-bottom: none; }
 
     /* Checkbox */
     .check-btn {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
-      border: 2px solid var(--border);
+      border: 2.5px solid var(--border);
       background: transparent;
       cursor: pointer;
       flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
       -webkit-tap-highlight-color: transparent;
     }
 
-    li.done .check-btn {
-      background: var(--primary);
+    .check-btn:hover {
       border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .check-btn:active {
+      transform: scale(0.88);
+    }
+
+    li.done .check-btn {
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      border-color: transparent;
+      box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25);
     }
 
     .check-btn svg {
@@ -356,11 +409,11 @@
 
     /* Delete button */
     .btn-delete {
-      width: 28px;
-      height: 28px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       border: none;
-      background: #ff3b3015;
+      background: var(--danger-light);
       color: var(--danger);
       font-size: 16px;
       cursor: pointer;
@@ -368,36 +421,44 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      transition: background 0.15s, transform 0.1s;
+      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
       -webkit-tap-highlight-color: transparent;
     }
 
-    .btn-delete:active {
+    .btn-delete:hover {
       background: #ff3b3030;
-      transform: scale(0.9);
+      box-shadow: 0 2px 8px rgba(255, 59, 48, 0.2);
+    }
+
+    .btn-delete:active {
+      background: #ff3b3040;
+      transform: scale(0.88);
     }
 
     /* ── Empty state ── */
     .empty {
       text-align: center;
-      padding: 56px 20px;
+      padding: 64px 20px;
       color: var(--text-secondary);
     }
 
     .empty svg {
-      width: 64px;
-      height: 64px;
-      opacity: 0.3;
-      margin-bottom: 12px;
+      width: 80px;
+      height: 80px;
+      opacity: 0.25;
+      margin-bottom: 16px;
+      animation: popIn 0.4s cubic-bezier(0.32, 0.72, 0, 1);
     }
 
     .empty p {
-      font-size: 17px;
-      font-weight: 500;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
     }
 
     .empty small {
       font-size: 14px;
+      opacity: 0.8;
     }
 
     /* ── Category row ── */
@@ -459,10 +520,10 @@
     }
 
     .cat-priority-badge {
-      width: 20px;
-      height: 20px;
-      border-radius: 6px;
-      background: var(--primary);
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
       color: #fff;
       font-size: 11px;
       font-weight: 700;
@@ -577,12 +638,12 @@
     .modal-cat-item:last-child { border-bottom: none; }
 
     .modal-priority-badge {
-      width: 24px;
-      height: 24px;
-      border-radius: 7px;
-      background: var(--primary);
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
       color: #fff;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       display: flex;
       align-items: center;
@@ -869,7 +930,10 @@
     .stat-number {
       font-size: 28px;
       font-weight: 700;
-      color: var(--primary);
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .stat-label {
@@ -895,36 +959,190 @@
     }
 
     .progress-bar {
-      height: 4px;
+      height: 6px;
       background: var(--border);
-      border-radius: 2px;
+      border-radius: 3px;
       overflow: hidden;
     }
 
     .progress-bar-fill {
       height: 100%;
-      background: var(--primary);
-      border-radius: 2px;
-      transition: width 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+      background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+      border-radius: 3px;
+      transition: width 0.5s cubic-bezier(0.32, 0.72, 0, 1);
     }
 
     .progress-bar-fill.complete {
-      background: var(--success);
+      background: linear-gradient(90deg, #34c759, #30d158);
     }
 
     /* ── Animations ── */
     @keyframes slideIn {
-      from { opacity: 0; transform: translateY(-8px); }
+      from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    li { animation: slideIn 0.25s cubic-bezier(0.32, 0.72, 0, 1); }
+
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateX(40px) scale(0.95); }
+    }
+
+    li.removing { animation: fadeOut 0.25s ease forwards; }
+
+    @keyframes popIn {
+      0%   { transform: scale(0.8); opacity: 0; }
+      60%  { transform: scale(1.05); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-4px); }
+      40% { transform: translateX(4px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(3px); }
+    }
+
+    .input-shake {
+      animation: shake 0.4s ease;
+    }
+
+    /* ── Toast notification ── */
+    .toast-container {
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom) + 24px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--toast-bg);
+      color: var(--toast-text);
+      padding: 12px 20px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: auto;
+      animation: toastIn 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      white-space: nowrap;
+    }
+
+    .toast.hiding {
+      animation: toastOut 0.3s ease forwards;
+    }
+
+    .toast-undo-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+
+    .toast-undo-btn:hover {
+      background: var(--primary-light);
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(20px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    li { animation: slideIn 0.2s ease; }
-
-    @keyframes fadeOut {
-      to { opacity: 0; transform: translateX(20px); }
+    @keyframes toastOut {
+      to { opacity: 0; transform: translateY(20px); }
     }
 
-    li.removing { animation: fadeOut 0.2s ease forwards; }
+    /* ── Sort controls ── */
+    .sort-bar {
+      display: flex;
+      gap: 6px;
+      padding: 0 20px 8px;
+      flex-wrap: wrap;
+    }
+
+    .sort-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .sort-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .sort-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .sort-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* ── Export button in settings ── */
+    .btn-export {
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-export:active { opacity: 0.8; }
+
+    /* ── Confetti canvas ── */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      pointer-events: none;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 24px 20px 32px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
 
     /* ── No results ── */
     .no-results {
@@ -936,8 +1154,8 @@
 
     /* ── Edit button ── */
     .btn-edit {
-      width: 28px;
-      height: 28px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       border: none;
       background: var(--primary-light);
@@ -948,12 +1166,16 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      transition: background 0.15s, transform 0.1s;
+      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
       -webkit-tap-highlight-color: transparent;
     }
 
+    .btn-edit:hover {
+      box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
+    }
+
     .btn-edit:active {
-      transform: scale(0.9);
+      transform: scale(0.88);
     }
 
     li.done .btn-edit {
@@ -981,7 +1203,7 @@
         </button>
       </div>
     </div>
-    <p class="subtitle" id="progress-text">Lade…</p>
+    <p class="subtitle" id="progress-text">Deine Liste ist leer</p>
   </header>
 
   <div class="search-bar" id="search-bar">
@@ -1022,7 +1244,22 @@
     <button class="btn-clear" id="clear-done-btn">Erledigte löschen</button>
   </div>
 
+  <div class="sort-bar" id="sort-bar" style="display:none;">
+    <button class="sort-btn active" data-sort="manual" title="Standard-Reihenfolge">📋 Standard</button>
+    <button class="sort-btn" data-sort="alpha" title="Alphabetisch sortieren">🔤 A–Z</button>
+    <button class="sort-btn" data-sort="alpha-desc" title="Alphabetisch absteigend">🔤 Z–A</button>
+    <button class="sort-btn" data-sort="unchecked" title="Offene zuerst">✅ Offen zuerst</button>
+  </div>
+
   <div class="list-wrapper" id="list-wrapper"></div>
+
+  <div class="footer">Einkaufsliste – Deine smarte Einkaufshilfe</div>
+
+  <!-- Toast container for undo -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Confetti canvas -->
+  <canvas id="confetti-canvas"></canvas>
 
   <!-- Categories Modal -->
   <div class="modal-overlay" id="cat-modal" role="dialog" aria-modal="true" aria-label="Kategorien verwalten">
@@ -1109,6 +1346,14 @@
           <div class="settings-group-title">Daten</div>
           <div class="settings-card">
             <div class="settings-row">
+              <span class="settings-row-label"><span class="icon">📋</span> Liste exportieren</span>
+              <button class="btn-export" id="export-btn">Kopieren</button>
+            </div>
+            <div class="settings-row">
+              <span class="settings-row-label"><span class="icon">📥</span> Liste als Datei speichern</span>
+              <button class="btn-export" id="download-btn">Download</button>
+            </div>
+            <div class="settings-row">
               <span class="settings-row-label"><span class="icon">🗑️</span> Alle Artikel löschen</span>
               <button class="btn-clear" id="delete-all-btn" style="font-size:14px;font-weight:500;">Löschen</button>
             </div>
@@ -1128,6 +1373,10 @@
     let items      = loadItems();
     let categories = loadCategories();
     let searchQuery = '';
+    let currentSort = 'manual';
+    let undoStack  = [];
+    let toastTimer = null;
+    let confettiShown = false;
 
     const input         = document.getElementById('new-item');
     const quantityInput = document.getElementById('new-quantity');
@@ -1154,6 +1403,11 @@
     const confirmDeleteToggle  = document.getElementById('confirm-delete-toggle');
     const deleteAllBtn         = document.getElementById('delete-all-btn');
     const metaThemeColor       = document.getElementById('meta-theme-color');
+    const sortBar              = document.getElementById('sort-bar');
+    const toastContainer       = document.getElementById('toast-container');
+    const exportBtn            = document.getElementById('export-btn');
+    const downloadBtn          = document.getElementById('download-btn');
+    const confettiCanvas       = document.getElementById('confetti-canvas');
 
     /* ── Persistence ── */
     function loadItems() {
@@ -1200,7 +1454,7 @@
         : theme;
 
       document.documentElement.setAttribute('data-theme', resolved);
-      metaThemeColor.setAttribute('content', resolved === 'dark' ? '#000000' : '#ffffff');
+      metaThemeColor.setAttribute('content', resolved === 'dark' ? '#000000' : '#f2f2f7');
     }
 
     function setTheme(theme) {
@@ -1321,6 +1575,11 @@
     function addCategory() {
       const name = newCatInput.value.trim();
       if (!name) return;
+      // Prevent duplicate categories
+      if (categories.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+        showToast('Kategorie existiert bereits');
+        return;
+      }
       categories.push({ id: uid(), name });
       saveCategories();
       newCatInput.value = '';
@@ -1371,6 +1630,186 @@
       return itemList.filter(i => i.text.toLowerCase().includes(q));
     }
 
+    /* ── Sort ── */
+    function sortItems(itemList) {
+      if (currentSort === 'manual') return itemList;
+      const sorted = [...itemList];
+      switch (currentSort) {
+        case 'alpha':
+          sorted.sort((a, b) => a.text.localeCompare(b.text, 'de'));
+          break;
+        case 'alpha-desc':
+          sorted.sort((a, b) => b.text.localeCompare(a.text, 'de'));
+          break;
+        case 'unchecked':
+          sorted.sort((a, b) => (a.done === b.done) ? 0 : a.done ? 1 : -1);
+          break;
+      }
+      return sorted;
+    }
+
+    /* ── Toast notifications ── */
+    function showToast(message, undoCallback) {
+      // Clear any existing toast
+      if (toastTimer) clearTimeout(toastTimer);
+      toastContainer.innerHTML = '';
+
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+
+      const msgSpan = document.createElement('span');
+      msgSpan.textContent = message;
+      toast.appendChild(msgSpan);
+
+      if (undoCallback) {
+        const undoBtn = document.createElement('button');
+        undoBtn.className = 'toast-undo-btn';
+        undoBtn.textContent = 'Rückgängig';
+        undoBtn.addEventListener('click', () => {
+          undoCallback();
+          dismissToast(toast);
+        });
+        toast.appendChild(undoBtn);
+      }
+
+      toastContainer.appendChild(toast);
+
+      toastTimer = setTimeout(() => {
+        dismissToast(toast);
+      }, 4000);
+    }
+
+    function dismissToast(toast) {
+      if (!toast || !toast.parentNode) return;
+      toast.classList.add('hiding');
+      toast.addEventListener('animationend', () => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, { once: true });
+      clearTimeout(toastTimer);
+      toastTimer = null;
+    }
+
+    /* ── Confetti effect ── */
+    function fireConfetti() {
+      const canvas = confettiCanvas;
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#007aff', '#5856d6', '#34c759', '#ff9500', '#ff2d55', '#af52de'];
+
+      for (let i = 0; i < 80; i++) {
+        particles.push({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+          y: canvas.height / 2,
+          vx: (Math.random() - 0.5) * 12,
+          vy: Math.random() * -14 - 4,
+          w: Math.random() * 8 + 4,
+          h: Math.random() * 6 + 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10,
+          gravity: 0.25 + Math.random() * 0.15,
+          opacity: 1
+        });
+      }
+
+      let frame = 0;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+
+        particles.forEach(p => {
+          p.vy += p.gravity;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rotation += p.rotSpeed;
+          p.vx *= 0.99;
+
+          if (frame > 40) p.opacity -= 0.02;
+          if (p.opacity <= 0) return;
+          alive = true;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.globalAlpha = Math.max(0, p.opacity);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+
+        frame++;
+        if (alive && frame < 120) {
+          requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+
+      animate();
+    }
+
+    /* ── Export list ── */
+    function exportListAsText() {
+      if (items.length === 0) {
+        showToast('Liste ist leer – nichts zu exportieren');
+        return;
+      }
+      const lines = ['🛒 Einkaufsliste', ''];
+      const open = items.filter(i => !i.done);
+      const done = items.filter(i => i.done);
+
+      if (open.length > 0) {
+        lines.push('📋 Noch zu kaufen:');
+        open.forEach(i => {
+          let line = '  ☐ ' + i.text;
+          if (i.quantity) line += ' (' + i.quantity + ')';
+          const cat = categories.find(c => c.id === i.categoryId);
+          if (cat) line += ' [' + cat.name + ']';
+          lines.push(line);
+        });
+      }
+
+      if (done.length > 0) {
+        if (open.length > 0) lines.push('');
+        lines.push('✅ Erledigt:');
+        done.forEach(i => {
+          let line = '  ☑ ' + i.text;
+          if (i.quantity) line += ' (' + i.quantity + ')';
+          lines.push(line);
+        });
+      }
+
+      return lines.join('\n');
+    }
+
+    function copyListToClipboard() {
+      const text = exportListAsText();
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('✅ Liste in die Zwischenablage kopiert');
+      }).catch(() => {
+        showToast('Kopieren fehlgeschlagen');
+      });
+    }
+
+    function downloadListAsFile() {
+      const text = exportListAsText();
+      if (!text) return;
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'einkaufsliste.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('📥 Liste heruntergeladen');
+    }
+
     /* ── Settings stats ── */
     function updateSettingsStats() {
       const total = items.length;
@@ -1384,7 +1823,7 @@
     function render() {
       wrapper.innerHTML = '';
 
-      const filtered = filterItems(items);
+      const filtered = sortItems(filterItems(items));
       const open = filtered.filter(i => !i.done);
       const done = filtered.filter(i => i.done);
 
@@ -1396,9 +1835,21 @@
         const pct = Math.round((doneAll / totalAll) * 100);
         progressBarFill.style.width = pct + '%';
         progressBarFill.classList.toggle('complete', doneAll === totalAll);
+
+        // Confetti when all done
+        if (doneAll === totalAll && !confettiShown) {
+          confettiShown = true;
+          setTimeout(fireConfetti, 300);
+        } else if (doneAll < totalAll) {
+          confettiShown = false;
+        }
       } else {
         progressBarContainer.style.display = 'none';
+        confettiShown = false;
       }
+
+      // Show sort bar when there are items
+      sortBar.style.display = totalAll > 1 ? '' : 'none';
 
       if (filtered.length === 0 && searchQuery) {
         wrapper.innerHTML = `<div class="no-results">Keine Ergebnisse für „${escapeHtml(searchQuery)}"</div>`;
@@ -1417,14 +1868,14 @@
         if (open.length > 0) {
           const label = document.createElement('p');
           label.className = 'section-label';
-          label.textContent = 'Noch zu kaufen';
+          label.textContent = `Noch zu kaufen (${open.length})`;
           wrapper.appendChild(label);
           renderGrouped(open);
         }
         if (done.length > 0) {
           const label = document.createElement('p');
           label.className = 'section-label';
-          label.textContent = 'Erledigt';
+          label.textContent = `Erledigt (${done.length})`;
           wrapper.appendChild(label);
           wrapper.appendChild(buildList(done));
         }
@@ -1435,7 +1886,7 @@
         ? 'Deine Liste ist leer'
         : doneAll === totalAll
           ? '🎉 Alles erledigt!'
-          : `${doneAll} von ${totalAll} erledigt`;
+          : `${doneAll} von ${totalAll} erledigt (${Math.round((doneAll / totalAll) * 100)}%)`;
 
       countTxt.textContent = totalAll > 0 ? `${totalAll} Artikel` : '';
       clearDoneBtn.style.display = items.some(i => i.done) ? '' : 'none';
@@ -1463,7 +1914,7 @@
         header.className = 'cat-header';
         header.innerHTML = `
           <div class="cat-priority-badge">${idx + 1}</div>
-          <span class="cat-header-name">${escapeHtml(cat.name)}</span>`;
+          <span class="cat-header-name">${escapeHtml(cat.name)} (${catItems.length})</span>`;
         wrapper.appendChild(header);
         wrapper.appendChild(buildList(catItems));
       });
@@ -1471,7 +1922,7 @@
       if (uncategorised.length > 0) {
         const header = document.createElement('div');
         header.className = 'cat-header';
-        header.innerHTML = `<span class="cat-header-name">Sonstige</span>`;
+        header.innerHTML = `<span class="cat-header-name">Sonstige (${uncategorised.length})</span>`;
         wrapper.appendChild(header);
         wrapper.appendChild(buildList(uncategorised));
       }
@@ -1517,6 +1968,17 @@
           qBadge.className = 'item-quantity';
           qBadge.textContent = 'Menge: ' + item.quantity;
           content.appendChild(qBadge);
+        }
+
+        // Category badge for done items (since they are not grouped)
+        if (item.done && item.categoryId) {
+          const cat = categories.find(c => c.id === item.categoryId);
+          if (cat) {
+            const catBadge = document.createElement('span');
+            catBadge.className = 'item-quantity';
+            catBadge.textContent = cat.name;
+            content.appendChild(catBadge);
+          }
         }
 
         // Edit button (accessible alternative to double-click)
@@ -1579,10 +2041,20 @@
     /* ── Actions ── */
     function addItem() {
       const text = input.value.trim();
-      if (!text) return;
+      if (!text) {
+        input.classList.add('input-shake');
+        input.addEventListener('animationend', () => input.classList.remove('input-shake'), { once: true });
+        return;
+      }
+      // Check for duplicate
+      if (items.some(i => i.text.toLowerCase() === text.toLowerCase() && !i.done)) {
+        showToast('⚠️ Artikel ist bereits in der Liste');
+        input.select();
+        return;
+      }
       const categoryId = catSelect.value || null;
       const quantity = quantityInput.value.trim() || null;
-      items.unshift({ id: uid(), text, done: false, categoryId, quantity });
+      items.unshift({ id: uid(), text, done: false, categoryId, quantity, createdAt: Date.now() });
       saveItems();
       render();
       input.value = '';
@@ -1600,27 +2072,59 @@
       if (settings.confirmDelete) {
         if (!confirm('Artikel wirklich löschen?')) return;
       }
+
+      // Save for undo
+      const deletedItem = items.find(i => i.id === id);
+      const deletedIndex = items.indexOf(deletedItem);
+
       li.classList.add('removing');
       li.addEventListener('animationend', () => {
         items = items.filter(i => i.id !== id);
         saveItems();
         render();
+
+        // Show undo toast
+        if (deletedItem) {
+          showToast(`„${deletedItem.text}" gelöscht`, () => {
+            // Undo: re-insert item at original position
+            items.splice(Math.min(deletedIndex, items.length), 0, deletedItem);
+            saveItems();
+            render();
+          });
+        }
       }, { once: true });
     }
 
     clearDoneBtn.addEventListener('click', () => {
+      const doneItems = items.filter(i => i.done);
+      if (doneItems.length === 0) return;
+      const count = doneItems.length;
       items = items.filter(i => !i.done);
       saveItems();
       render();
+
+      showToast(`${count} erledigte Artikel gelöscht`, () => {
+        // Undo: re-add all done items
+        items = items.concat(doneItems);
+        saveItems();
+        render();
+      });
     });
 
     /* ── Delete all ── */
     deleteAllBtn.addEventListener('click', () => {
       if (!confirm('Alle Artikel unwiderruflich löschen?')) return;
+      const backupItems = [...items];
       items = [];
       saveItems();
       render();
       updateSettingsStats();
+
+      showToast('Alle Artikel gelöscht', () => {
+        items = backupItems;
+        saveItems();
+        render();
+      });
     });
 
     /* ── Input events ── */
@@ -1635,6 +2139,15 @@
       render();
     });
 
+    /* ── Sort events ── */
+    document.querySelectorAll('.sort-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentSort = btn.dataset.sort;
+        document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b === btn));
+        render();
+      });
+    });
+
     /* ── Category modal events ── */
     manageCatsBtn.addEventListener('click', openModal);
     closeModalBtn.addEventListener('click', closeModal);
@@ -1646,6 +2159,10 @@
     settingsBtn.addEventListener('click', openSettingsModal);
     closeSettingsBtn.addEventListener('click', closeSettingsModal);
     settingsModal.addEventListener('click', e => { if (e.target === settingsModal) closeSettingsModal(); });
+
+    /* ── Export events ── */
+    exportBtn.addEventListener('click', copyListToClipboard);
+    downloadBtn.addEventListener('click', downloadListAsFile);
 
     /* ── Theme buttons ── */
     document.querySelectorAll('.theme-option').forEach(btn => {
@@ -1659,6 +2176,21 @@
       const s = loadSettings();
       s.confirmDelete = confirmDeleteToggle.checked;
       saveSettings(s);
+    });
+
+    /* ── Keyboard shortcuts ── */
+    document.addEventListener('keydown', e => {
+      // Ctrl/Cmd+F to toggle search
+      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        e.preventDefault();
+        toggleSearch();
+      }
+      // Escape to close modals
+      if (e.key === 'Escape') {
+        if (catModal.classList.contains('open')) closeModal();
+        if (settingsModal.classList.contains('open')) closeSettingsModal();
+        if (searchBar.classList.contains('visible')) toggleSearch();
+      }
     });
 
     /* ── Init ── */
