@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="theme-color" content="#ffffff" />
+  <meta name="theme-color" content="#ffffff" id="meta-theme-color" />
   <title>Einkaufsliste</title>
   <style>
     *, *::before, *::after {
@@ -14,18 +14,49 @@
       padding: 0;
     }
 
+    /* ── Light theme (default) ── */
     :root {
       --bg: #f5f5f7;
       --surface: #ffffff;
+      --surface-secondary: #f2f2f7;
       --primary: #007aff;
       --primary-light: #e8f0fe;
       --danger: #ff3b30;
+      --success: #34c759;
       --text: #1c1c1e;
       --text-secondary: #8e8e93;
       --border: #e5e5ea;
       --checked-text: #aeaeb2;
       --radius: 14px;
       --shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+      --header-bg: rgba(245, 245, 247, 0.85);
+      --modal-backdrop: rgba(0, 0, 0, 0.4);
+      --quantity-bg: #e8f0fe;
+      --quantity-text: #007aff;
+      --search-bg: #e5e5ea;
+      color-scheme: light;
+    }
+
+    /* ── Dark theme ── */
+    [data-theme="dark"] {
+      --bg: #000000;
+      --surface: #1c1c1e;
+      --surface-secondary: #2c2c2e;
+      --primary: #0a84ff;
+      --primary-light: #0a84ff20;
+      --danger: #ff453a;
+      --success: #30d158;
+      --text: #f5f5f7;
+      --text-secondary: #98989d;
+      --border: #38383a;
+      --checked-text: #636366;
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+      --header-bg: rgba(0, 0, 0, 0.85);
+      --modal-backdrop: rgba(0, 0, 0, 0.6);
+      --quantity-bg: #0a84ff20;
+      --quantity-text: #0a84ff;
+      --search-bg: #38383a;
+      color-scheme: dark;
     }
 
     body {
@@ -34,6 +65,7 @@
       color: var(--text);
       min-height: 100dvh;
       padding-bottom: env(safe-area-inset-bottom);
+      transition: background 0.3s, color 0.3s;
     }
 
     /* ── Header ── */
@@ -41,11 +73,18 @@
       position: sticky;
       top: 0;
       z-index: 10;
-      background: rgba(245, 245, 247, 0.85);
+      background: var(--header-bg);
       backdrop-filter: saturate(180%) blur(20px);
       -webkit-backdrop-filter: saturate(180%) blur(20px);
       padding: calc(env(safe-area-inset-top) + 16px) 20px 16px;
       border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     header h1 {
@@ -54,10 +93,75 @@
       letter-spacing: -0.5px;
     }
 
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .header-icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: var(--surface-secondary);
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .header-icon-btn:active {
+      transform: scale(0.92);
+    }
+
     header .subtitle {
       font-size: 13px;
       color: var(--text-secondary);
       margin-top: 2px;
+    }
+
+    /* ── Search bar ── */
+    .search-bar {
+      padding: 10px 20px 0;
+      display: none;
+    }
+
+    .search-bar.visible {
+      display: block;
+    }
+
+    .search-bar input {
+      width: 100%;
+      height: 38px;
+      padding: 0 14px 0 36px;
+      font-size: 15px;
+      font-family: inherit;
+      border: none;
+      border-radius: 10px;
+      background: var(--search-bg);
+      color: var(--text);
+      outline: none;
+      transition: background 0.2s;
+    }
+
+    .search-bar input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    .search-wrapper {
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      pointer-events: none;
     }
 
     /* ── Input area ── */
@@ -78,7 +182,7 @@
       background: var(--surface);
       color: var(--text);
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.3s;
     }
 
     .input-area input:focus {
@@ -87,6 +191,12 @@
 
     .input-area input::placeholder {
       color: var(--text-secondary);
+    }
+
+    .quantity-input {
+      width: 60px !important;
+      flex: none !important;
+      text-align: center;
     }
 
     .btn-add {
@@ -155,6 +265,7 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
+      transition: background 0.3s, box-shadow 0.3s;
     }
 
     li {
@@ -197,17 +308,50 @@
 
     li.done .check-btn svg { opacity: 1; }
 
-    /* Item text */
-    .item-text {
+    /* Item content */
+    .item-content {
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .item-text {
       font-size: 16px;
       word-break: break-word;
       transition: color 0.2s;
     }
 
+    .item-text-editing {
+      font-size: 16px;
+      font-family: inherit;
+      border: 1.5px solid var(--primary);
+      border-radius: 8px;
+      padding: 4px 8px;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      width: 100%;
+    }
+
     li.done .item-text {
       color: var(--checked-text);
       text-decoration: line-through;
+    }
+
+    .item-quantity {
+      font-size: 12px;
+      color: var(--quantity-text);
+      background: var(--quantity-bg);
+      padding: 2px 8px;
+      border-radius: 6px;
+      width: fit-content;
+      font-weight: 500;
+    }
+
+    li.done .item-quantity {
+      opacity: 0.5;
     }
 
     /* Delete button */
@@ -282,7 +426,7 @@
       background-position: right 12px center;
       padding-right: 32px;
       cursor: pointer;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.3s;
     }
 
     .cat-select:focus { border-color: var(--primary); }
@@ -340,7 +484,7 @@
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.4);
+      background: var(--modal-backdrop);
       z-index: 100;
       display: flex;
       align-items: flex-end;
@@ -543,6 +687,231 @@
 
     .btn-add-cat:active { opacity: 0.8; }
 
+    /* ── Settings modal ── */
+    .settings-content {
+      padding: 8px 20px 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .settings-group {
+      margin-bottom: 20px;
+    }
+
+    .settings-group-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .settings-card {
+      background: var(--surface-secondary);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+
+    .settings-row:last-child { border-bottom: none; }
+
+    .settings-row-label {
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .settings-row-label .icon {
+      font-size: 20px;
+      width: 28px;
+      text-align: center;
+    }
+
+    /* iOS-style toggle switch */
+    .toggle-switch {
+      position: relative;
+      width: 51px;
+      height: 31px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: var(--border);
+      border-radius: 31px;
+      transition: background 0.3s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      height: 27px;
+      width: 27px;
+      left: 2px;
+      bottom: 2px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background: var(--success);
+    }
+
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+    }
+
+    /* Theme selector buttons */
+    .theme-options {
+      display: flex;
+      gap: 10px;
+      padding: 4px 0;
+    }
+
+    .theme-option {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 8px;
+      border-radius: 12px;
+      border: 2.5px solid transparent;
+      background: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      transition: border-color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .theme-option.active {
+      border-color: var(--primary);
+    }
+
+    .theme-preview {
+      width: 56px;
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .theme-preview-light {
+      background: #f5f5f7;
+    }
+
+    .theme-preview-light::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      right: 6px;
+      height: 6px;
+      background: #007aff;
+      border-radius: 3px;
+    }
+
+    .theme-preview-dark {
+      background: #1c1c1e;
+    }
+
+    .theme-preview-dark::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      right: 6px;
+      height: 6px;
+      background: #0a84ff;
+      border-radius: 3px;
+    }
+
+    .theme-preview-auto {
+      background: linear-gradient(135deg, #f5f5f7 50%, #1c1c1e 50%);
+    }
+
+    .theme-preview-auto::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      right: 6px;
+      height: 6px;
+      background: linear-gradient(90deg, #007aff 50%, #0a84ff 50%);
+      border-radius: 3px;
+    }
+
+    /* Statistics in settings */
+    .stat-number {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 8px;
+    }
+
+    /* ── Progress bar ── */
+    .progress-bar-container {
+      padding: 0 20px 6px;
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 2px;
+      transition: width 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    .progress-bar-fill.complete {
+      background: var(--success);
+    }
+
     /* ── Animations ── */
     @keyframes slideIn {
       from { opacity: 0; transform: translateY(-8px); }
@@ -556,17 +925,58 @@
     }
 
     li.removing { animation: fadeOut 0.2s ease forwards; }
+
+    /* ── No results ── */
+    .no-results {
+      text-align: center;
+      padding: 32px 20px;
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>🛒 Einkaufsliste</h1>
+    <div class="header-top">
+      <h1>🛒 Einkaufsliste</h1>
+      <div class="header-actions">
+        <button class="header-icon-btn" id="search-toggle-btn" aria-label="Suchen">
+          <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+            <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M11.5 11.5L15.5 15.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="header-icon-btn" id="settings-btn" aria-label="Einstellungen">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="2.5" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M9 1v2M9 15v2M1 9h2M15 9h2M3.05 3.05l1.41 1.41M13.54 13.54l1.41 1.41M3.05 14.95l1.41-1.41M13.54 4.46l1.41-1.41" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
     <p class="subtitle" id="progress-text">Lade…</p>
   </header>
 
+  <div class="search-bar" id="search-bar">
+    <div class="search-wrapper">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 17 17" fill="none">
+        <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M11.5 11.5L15.5 15.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <input id="search-input" type="text" placeholder="Suchen…" autocomplete="off" />
+    </div>
+  </div>
+
+  <div class="progress-bar-container" id="progress-bar-container" style="display:none;">
+    <div class="progress-bar">
+      <div class="progress-bar-fill" id="progress-bar-fill" style="width:0%"></div>
+    </div>
+  </div>
+
   <div class="input-area">
     <input id="new-item" type="text" placeholder="Artikel hinzufügen…" autocomplete="off" autocorrect="on" />
+    <input id="new-quantity" type="text" class="quantity-input" placeholder="Anz." autocomplete="off" />
     <button class="btn-add" id="add-btn" aria-label="Hinzufügen">
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
         <path d="M9 1v16M1 9h16" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
@@ -604,14 +1014,97 @@
     </div>
   </div>
 
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settings-modal" role="dialog" aria-modal="true" aria-label="Einstellungen">
+    <div class="modal-panel">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <h2>Einstellungen</h2>
+        <button class="modal-close-btn" id="close-settings-btn" aria-label="Schließen">✕</button>
+      </div>
+      <div class="settings-content">
+
+        <div class="settings-group">
+          <div class="settings-group-title">Erscheinungsbild</div>
+          <div class="settings-card">
+            <div class="settings-row">
+              <div class="theme-options" id="theme-options">
+                <button class="theme-option active" data-theme="light">
+                  <div class="theme-preview theme-preview-light"></div>
+                  Hell
+                </button>
+                <button class="theme-option" data-theme="dark">
+                  <div class="theme-preview theme-preview-dark"></div>
+                  Dunkel
+                </button>
+                <button class="theme-option" data-theme="auto">
+                  <div class="theme-preview theme-preview-auto"></div>
+                  Automatisch
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">Funktionen</div>
+          <div class="settings-card">
+            <div class="settings-row">
+              <span class="settings-row-label"><span class="icon">🔔</span> Bestätigung beim Löschen</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="confirm-delete-toggle" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">Statistiken</div>
+          <div class="settings-card">
+            <div class="stats-grid" id="stats-grid">
+              <div class="stat-item">
+                <div class="stat-number" id="stat-total">0</div>
+                <div class="stat-label">Gesamt</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number" id="stat-open">0</div>
+                <div class="stat-label">Offen</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number" id="stat-done">0</div>
+                <div class="stat-label">Erledigt</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">Daten</div>
+          <div class="settings-card">
+            <div class="settings-row">
+              <span class="settings-row-label"><span class="icon">🗑️</span> Alle Artikel löschen</span>
+              <button class="btn-clear" id="delete-all-btn" style="font-size:14px;font-weight:500;">Löschen</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <script>
     const STORAGE_KEY    = 'shopping-list-v1';
     const CATEGORIES_KEY = 'shopping-categories-v1';
+    const THEME_KEY      = 'shopping-theme-v1';
+    const SETTINGS_KEY   = 'shopping-settings-v1';
 
     let items      = loadItems();
     let categories = loadCategories();
+    let searchQuery = '';
 
     const input         = document.getElementById('new-item');
+    const quantityInput = document.getElementById('new-quantity');
     const addBtn        = document.getElementById('add-btn');
     const wrapper       = document.getElementById('list-wrapper');
     const progressTxt   = document.getElementById('progress-text');
@@ -624,6 +1117,17 @@
     const modalCatList  = document.getElementById('modal-cat-list');
     const newCatInput   = document.getElementById('new-cat-input');
     const addCatBtn     = document.getElementById('add-cat-btn');
+    const settingsBtn   = document.getElementById('settings-btn');
+    const settingsModal = document.getElementById('settings-modal');
+    const closeSettingsBtn = document.getElementById('close-settings-btn');
+    const searchToggleBtn  = document.getElementById('search-toggle-btn');
+    const searchBar        = document.getElementById('search-bar');
+    const searchInput      = document.getElementById('search-input');
+    const progressBarContainer = document.getElementById('progress-bar-container');
+    const progressBarFill      = document.getElementById('progress-bar-fill');
+    const confirmDeleteToggle  = document.getElementById('confirm-delete-toggle');
+    const deleteAllBtn         = document.getElementById('delete-all-btn');
+    const metaThemeColor       = document.getElementById('meta-theme-color');
 
     /* ── Persistence ── */
     function loadItems() {
@@ -634,6 +1138,10 @@
       try { return JSON.parse(localStorage.getItem(CATEGORIES_KEY)) || []; } catch { return []; }
     }
 
+    function loadSettings() {
+      try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}; } catch { return {}; }
+    }
+
     function saveItems() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     }
@@ -641,6 +1149,51 @@
     function saveCategories() {
       localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
     }
+
+    function saveSettings(settings) {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    }
+
+    /* ── Theme management ── */
+    function getPreferredTheme() {
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved === 'dark' || saved === 'light') return saved;
+      if (saved === 'auto' || !saved) {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      return 'light';
+    }
+
+    function getThemeSetting() {
+      return localStorage.getItem(THEME_KEY) || 'light';
+    }
+
+    function applyTheme(theme) {
+      const resolved = theme === 'auto'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : theme;
+
+      document.documentElement.setAttribute('data-theme', resolved);
+      metaThemeColor.setAttribute('content', resolved === 'dark' ? '#000000' : '#ffffff');
+    }
+
+    function setTheme(theme) {
+      localStorage.setItem(THEME_KEY, theme);
+      applyTheme(theme);
+      updateThemeButtons();
+    }
+
+    function updateThemeButtons() {
+      const current = getThemeSetting();
+      document.querySelectorAll('.theme-option').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.theme === current);
+      });
+    }
+
+    // Listen for system theme changes (for auto mode)
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (getThemeSetting() === 'auto') applyTheme('auto');
+    });
 
     /* ── Helpers ── */
     function uid() {
@@ -669,6 +1222,15 @@
 
     function closeModal() {
       catModal.classList.remove('open');
+    }
+
+    function openSettingsModal() {
+      updateSettingsStats();
+      settingsModal.classList.add('open');
+    }
+
+    function closeSettingsModal() {
+      settingsModal.classList.remove('open');
     }
 
     function renderModalCatList() {
@@ -765,14 +1327,56 @@
       render();
     }
 
+    /* ── Search ── */
+    function toggleSearch() {
+      const isVisible = searchBar.classList.toggle('visible');
+      if (isVisible) {
+        searchInput.focus();
+      } else {
+        searchInput.value = '';
+        searchQuery = '';
+        render();
+      }
+    }
+
+    function filterItems(itemList) {
+      if (!searchQuery) return itemList;
+      const q = searchQuery.toLowerCase();
+      return itemList.filter(i => i.text.toLowerCase().includes(q));
+    }
+
+    /* ── Settings stats ── */
+    function updateSettingsStats() {
+      const total = items.length;
+      const done = items.filter(i => i.done).length;
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-open').textContent = total - done;
+      document.getElementById('stat-done').textContent = done;
+    }
+
     /* ── Render ── */
     function render() {
       wrapper.innerHTML = '';
 
-      const open = items.filter(i => !i.done);
-      const done = items.filter(i => i.done);
+      const filtered = filterItems(items);
+      const open = filtered.filter(i => !i.done);
+      const done = filtered.filter(i => i.done);
 
-      if (items.length === 0) {
+      // Progress bar
+      const totalAll = items.length;
+      const doneAll = items.filter(i => i.done).length;
+      if (totalAll > 0) {
+        progressBarContainer.style.display = '';
+        const pct = Math.round((doneAll / totalAll) * 100);
+        progressBarFill.style.width = pct + '%';
+        progressBarFill.classList.toggle('complete', doneAll === totalAll);
+      } else {
+        progressBarContainer.style.display = 'none';
+      }
+
+      if (filtered.length === 0 && searchQuery) {
+        wrapper.innerHTML = `<div class="no-results">Keine Ergebnisse für „${escapeHtml(searchQuery)}"</div>`;
+      } else if (items.length === 0) {
         wrapper.innerHTML = `
           <div class="empty">
             <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -801,16 +1405,14 @@
       }
 
       // Stats
-      const total     = items.length;
-      const doneCount = done.length;
-      progressTxt.textContent = total === 0
+      progressTxt.textContent = totalAll === 0
         ? 'Deine Liste ist leer'
-        : doneCount === total
+        : doneAll === totalAll
           ? '🎉 Alles erledigt!'
-          : `${doneCount} von ${total} erledigt`;
+          : `${doneAll} von ${totalAll} erledigt`;
 
-      countTxt.textContent = total > 0 ? `${total} Artikel` : '';
-      clearDoneBtn.style.display = done.length > 0 ? '' : 'none';
+      countTxt.textContent = totalAll > 0 ? `${totalAll} Artikel` : '';
+      clearDoneBtn.style.display = items.some(i => i.done) ? '' : 'none';
     }
 
     function renderGrouped(openItems) {
@@ -869,10 +1471,27 @@
           </svg>`;
         checkBtn.addEventListener('click', () => toggleDone(item.id));
 
+        // Content wrapper
+        const content = document.createElement('div');
+        content.className = 'item-content';
+
         // Text
         const span = document.createElement('span');
         span.className = 'item-text';
         span.textContent = item.text;
+
+        // Double-tap to edit
+        span.addEventListener('dblclick', () => startEditing(item, span, content));
+
+        content.appendChild(span);
+
+        // Quantity badge
+        if (item.quantity) {
+          const qBadge = document.createElement('span');
+          qBadge.className = 'item-quantity';
+          qBadge.textContent = 'Menge: ' + escapeHtml(item.quantity);
+          content.appendChild(qBadge);
+        }
 
         // Delete button
         const delBtn = document.createElement('button');
@@ -885,11 +1504,39 @@
         delBtn.addEventListener('click', () => deleteItem(item.id, li));
 
         li.appendChild(checkBtn);
-        li.appendChild(span);
+        li.appendChild(content);
         li.appendChild(delBtn);
         ul.appendChild(li);
       });
       return ul;
+    }
+
+    /* ── Inline editing ── */
+    function startEditing(item, span, content) {
+      if (item.done) return;
+      const editInput = document.createElement('input');
+      editInput.className = 'item-text-editing';
+      editInput.value = item.text;
+      editInput.type = 'text';
+
+      const finishEdit = () => {
+        const newText = editInput.value.trim();
+        if (newText && newText !== item.text) {
+          item.text = newText;
+          saveItems();
+        }
+        render();
+      };
+
+      editInput.addEventListener('blur', finishEdit);
+      editInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') editInput.blur();
+        if (e.key === 'Escape') { editInput.value = item.text; editInput.blur(); }
+      });
+
+      content.replaceChild(editInput, span);
+      editInput.focus();
+      editInput.select();
     }
 
     /* ── Actions ── */
@@ -897,10 +1544,12 @@
       const text = input.value.trim();
       if (!text) return;
       const categoryId = catSelect.value || null;
-      items.unshift({ id: uid(), text, done: false, categoryId });
+      const quantity = quantityInput.value.trim() || null;
+      items.unshift({ id: uid(), text, done: false, categoryId, quantity });
       saveItems();
       render();
       input.value = '';
+      quantityInput.value = '';
       input.focus();
     }
 
@@ -910,6 +1559,10 @@
     }
 
     function deleteItem(id, li) {
+      const settings = loadSettings();
+      if (settings.confirmDelete) {
+        if (!confirm('Artikel wirklich löschen?')) return;
+      }
       li.classList.add('removing');
       li.addEventListener('animationend', () => {
         items = items.filter(i => i.id !== id);
@@ -924,9 +1577,26 @@
       render();
     });
 
+    /* ── Delete all ── */
+    deleteAllBtn.addEventListener('click', () => {
+      if (!confirm('Alle Artikel unwiderruflich löschen?')) return;
+      items = [];
+      saveItems();
+      render();
+      updateSettingsStats();
+    });
+
     /* ── Input events ── */
     addBtn.addEventListener('click', addItem);
     input.addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
+    quantityInput.addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
+
+    /* ── Search events ── */
+    searchToggleBtn.addEventListener('click', toggleSearch);
+    searchInput.addEventListener('input', () => {
+      searchQuery = searchInput.value.trim();
+      render();
+    });
 
     /* ── Category modal events ── */
     manageCatsBtn.addEventListener('click', openModal);
@@ -935,7 +1605,28 @@
     addCatBtn.addEventListener('click', addCategory);
     newCatInput.addEventListener('keydown', e => { if (e.key === 'Enter') addCategory(); });
 
+    /* ── Settings modal events ── */
+    settingsBtn.addEventListener('click', openSettingsModal);
+    closeSettingsBtn.addEventListener('click', closeSettingsModal);
+    settingsModal.addEventListener('click', e => { if (e.target === settingsModal) closeSettingsModal(); });
+
+    /* ── Theme buttons ── */
+    document.querySelectorAll('.theme-option').forEach(btn => {
+      btn.addEventListener('click', () => setTheme(btn.dataset.theme));
+    });
+
+    /* ── Confirm delete toggle ── */
+    const savedSettings = loadSettings();
+    confirmDeleteToggle.checked = savedSettings.confirmDelete || false;
+    confirmDeleteToggle.addEventListener('change', () => {
+      const s = loadSettings();
+      s.confirmDelete = confirmDeleteToggle.checked;
+      saveSettings(s);
+    });
+
     /* ── Init ── */
+    applyTheme(getThemeSetting());
+    updateThemeButtons();
     syncCatSelect();
     render();
   </script>
